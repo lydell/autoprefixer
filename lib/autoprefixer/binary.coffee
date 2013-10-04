@@ -174,7 +174,7 @@ class Binary
 
       Climap(input, output)
         .parse (content, source) ->
-          compiler.parse(content, source)
+          compiler.parse(content, {source})
 
         .reduce (concat, current) ->
           concat.stylesheet.rules.push(current.stylesheet.rules...)

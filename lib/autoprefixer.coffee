@@ -55,13 +55,13 @@ class Autoprefixer
     @browsers = @prefixes.browsers.selected
 
   # Parse CSS
-  parse: (str, source = null) ->
+  parse: (str, options = {}) ->
     @catchParseErrors =>
-      parse(@removeBadComments(str), {position: true, source})
+      parse(@removeBadComments(str), {position: true, source: options.source || '?'})
 
   # Parse CSS (if needed) and add prefixed properties for selected browsers
   compile: (nodes, data = {}) ->
-    nodes = @parse(nodes, data.source || '?') if typeof nodes == 'string'
+    nodes = @parse(nodes, data) if typeof nodes == 'string'
     @rework(nodes.stylesheet)
     compiled = stringify(nodes, data)
     if data.map
