@@ -57,7 +57,7 @@ class Autoprefixer
   # Parse CSS
   parse: (str, options = {}) ->
     @catchParseErrors =>
-      parse(@removeBadComments(str), {position: true, source: options.source || '?'})
+      parse(@removeBadComments(str), {position: true, source: options.source})
 
   # Parse CSS (if needed) and add prefixed properties for selected browsers
   compile: (nodes, data = {}) ->
