@@ -1,3 +1,10 @@
+# Fork information
+This fork adds one thing: source map support. That's the only intended difference there will ever
+be. I will maintain this fork until the [source map issue] in the original autoprefixer repo is
+resolved.
+
+[source map issue]: https://github.com/ai/autoprefixer/issues/37
+
 # Autoprefixer
 
 <img align="right" width="94" src="http://ai.github.io/autoprefixer/logo.svg" title="Autoprefixer logo by Anton Lovchikov">
