@@ -281,7 +281,9 @@ environment.enable("autoprefixer");
 
 ### Node.js
 
-Use `autoprefixer` npm package:
+Add `autoprefixer: "lydell/autoprefixer#source-maps"` to package.json and run `npm install`. That
+will always install the latest version, but I don't think that is a problem. (You can specify
+specific commits if you really need to.)
 
 ```js
 var autoprefixer = require('autoprefixer');
