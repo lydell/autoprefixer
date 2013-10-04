@@ -103,7 +103,7 @@ describe 'Binary', ->
     @exec '-b', 'chrome 25', 'a.css', 'b.css', '-o', 'c.css', (out, err) ->
       err.should.be.false
       out.should.eql ''
-      read('c.css').should.eql prefixed + "a {\n  color: black;\n}"
+      read('c.css').should.eql prefixed + "\n\n" + "a {\n  color: black;\n}"
       done()
 
   it 'outputs to stdout', (done) ->
@@ -122,9 +122,9 @@ describe 'Binary', ->
       done()
 
   it "raises an error when files doesn't exists", (done) ->
-    @exec 'a', (out, err) ->
+    @exec 'nonexistent.file', (out, err) ->
       out.should.be.empty
-      err.should.match(/autoprefixer: File a doesn't exists/)
+      err.should.match(/autoprefixer: .* no such file .*nonexistent\.file/)
       done()
 
   it 'raises an error when unknown arguments are given', (done) ->
@@ -144,6 +144,37 @@ describe 'Binary', ->
     @exec '-b', 'chrome 25', (out, err) ->
       out.should.be.empty
       err.should.match(/^autoprefixer: Can't parse CSS/)
+      done()
+
+  it "doesn't care about `-m` if `-o` isn't set", (done) ->
+    write('a.css', css)
+    @exec '-b', 'chrome 25', 'a.css', '-m', (out, err) ->
+      err.should.be.false
+      out.should.be.empty
+      read('a.css').should.eql prefixed
+      fs.existsSync('a.css.map').should.be.false
+      done()
+
+  it "doesn't care about `-m` it outputting to stdout", (done) ->
+    write('a.css', css)
+    @exec '-b', 'chrome 25', 'a.css', '-o', '-', '-m', (out, err) ->
+      err.should.be.false
+      out.should.eql prefixed + "\n"
+      fs.existsSync('-.map').should.be.false
+      done()
+
+  it 'generates source maps', (done) ->
+    write('a.css', css)
+    @exec '-b', 'chrome 25', 'a.css', '-o', 'b.css', '-m', (out, err) ->
+      err.should.be.false
+      out.should.be.empty
+      read('b.css').should.eql prefixed + "\n/*# sourceMappingURL=b.css.map */"
+      JSON.parse(read('b.css.map')).should.eql
+        version: 3
+        file: 'b.css'
+        sources: ['a.css']
+        names: []
+        mappings: 'AAAA,G;EAAI,2B;EAAA,mB;C'
       done()
 
 describe 'bin/autoprefixer', ->

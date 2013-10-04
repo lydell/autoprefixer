@@ -16,6 +16,7 @@
 
 autoprefixer = require('../autoprefixer')
 fs           = require('fs')
+Climap       = require('climap')
 
 class Binary
   constructor: (process) ->
@@ -30,7 +31,6 @@ class Binary
 
     @parseArguments()
 
-  # Quick help message
   help: -> '''
     Usage: autoprefixer [OPTION...] FILES
 
@@ -39,12 +39,12 @@ class Binary
     Options:
       -b, --browsers BROWSERS  add prefixes for selected browsers
       -o, --output FILE        set output CSS file
+      -m, --map                create <output file>.map source map file
       -i, --inspect            show selected browsers and properties
       -h, --help               show help text
       -v, --version            print program version
     '''
 
-  # Options description
   desc: -> '''
     Files:
       By default, prefixed CSS will rewrite original files.
@@ -60,21 +60,17 @@ class Binary
     '''
     .replace(/\+\s+/g, '')
 
-  # Print to stdout
   print: (str) ->
     str = str.replace(/\n$/, '')
     @stdout.write(str + "\n")
 
-  # Print to stdout
   error: (str) ->
     @status = 1
     @stderr.write(str + "\n")
 
-  # Get current version
   version: ->
     require('../../package.json').version
 
-  # Parse arguments
   parseArguments: ->
     args = @arguments.slice()
     while args.length > 0
@@ -99,6 +95,9 @@ class Binary
         when '-o', '--output'
           @outputFile = args.shift()
 
+        when '-m', '--map'
+          @sourceMap = true
+
         else
           if arg.match(/^-\w$/) || arg.match(/^--\w[\w-]+$/)
             @command = undefined
@@ -110,26 +109,23 @@ class Binary
           else
             @inputFiles.push(arg)
 
-    return
+    if @sourceMap and (not @outputFile or @outputFile == '-')
+      delete @sourceMap
 
-  # Print help
   showHelp: (done) ->
     @print @help()
     @print ''
     @print @desc()
     done()
 
-  # Print version
   showVersion: (done) ->
     @print "autoprefixer #{ @version() }"
     done()
 
-  # Print inspect
   inspect: (done) ->
     @print @compiler().inspect()
     done()
 
-  # Update data
   update: (done) ->
     try
       coffee = require('coffee-script')
@@ -150,90 +146,52 @@ class Binary
 
     updater.run()
 
-  # Mark that there is another async work
-  startWork: ->
-    @waiting += 1
-
-  # Execute done callback if there is no works
-  endWork: ->
-    @waiting -= 1
-    @doneCallback() if @waiting <= 0
-
-  # Write error to stderr and finish work
-  workError: (str) ->
-    @error(str)
-    @endWork()
-
   # Lazy loading for Autoprefixer instance
   compiler: ->
     @compilerCache ||= autoprefixer(@requirements)
 
-  # Compile loaded CSS
-  compileCSS: (css, file) ->
-    try
-      prefixed = @compiler().compile(css)
-    catch error
-      if error.autoprefixer or error.css
-        @error "autoprefixer: #{ error.message }"
-      else
-        @error 'autoprefixer: Internal error'
-
-      if error.css or not error.autoprefixer
-        if error.stack?
-          @error ''
-          @error error.stack
-    return @endWork() unless prefixed
-
-    if @outputFile == '-'
-      @print prefixed
-      @endWork()
-
-    else if @outputFile
-      try
-        unless @outputInited
-          @outputInited = true
-          fs.writeFileSync(@outputFile, '')
-        fs.appendFileSync(@outputFile, prefixed)
-        @endWork()
-
-      catch error
-        @workError "autoprefixer: #{ error.message }"
-
-    else if file
-      fs.writeFile file, prefixed, (error) =>
-        @error "autoprefixer: #{ error }" if error
-        @endWork()
-
-  # Compile selected files
   compile: (done) ->
-    @waiting      = 0
-    @doneCallback = done
-
     if @inputFiles.length == 0
-      @startWork()
       @outputFile ||= '-'
-
       css = ''
       @stdin.resume()
       @stdin.on 'data', (chunk) -> css += chunk
-      @stdin.on 'end', => @compileCSS(css)
+      @stdin.on 'end', =>
+        @compileCSS({source: 'stdin', content: css}, @outputFile)
+
+    else if @outputFile
+      @compileCSS(@inputFiles, @outputFile)
+
     else
       for file in @inputFiles
-        @startWork()
+        @compileCSS(file)
 
-      for file in @inputFiles
-        unless fs.existsSync(file)
-          @workError "autoprefixer: File #{ file } doesn't exists"
-          continue
+    done()
 
-        try
-          css = fs.readFileSync(file).toString()
-        catch error
-          @workError "autoprefixer: #{ error.message }"
-          continue
+  compileCSS: (input, output = input) ->
+    try
+      compiler = @compiler()
 
-        @compileCSS(css, file)
-      false
+      Climap(input, output)
+        .parse (content, source) ->
+          compiler.parse(content, source)
+
+        .reduce (concat, current) ->
+          concat.stylesheet.rules.push(current.stylesheet.rules...)
+          concat
+
+        .compile (ast, data) =>
+          data.map = @sourceMap
+          compiled = compiler.compile(ast, data)
+          {content: compiled.toString(), map: compiled.map}
+
+        .write (compiled, map) =>
+          if output == '-'
+            @print compiled
+            true
+
+    catch error
+      @error "autoprefixer: #{ error.message }"
 
   # Execute command selected by arguments
   run: (done) ->

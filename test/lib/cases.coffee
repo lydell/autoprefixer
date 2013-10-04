@@ -1,6 +1,6 @@
 fs        = require('fs')
 parse     = require('css-parse')
-stringify = require('css-stringify')
+stringify = require('sheet')
 
 module.exports =
   read: (file) ->
@@ -14,5 +14,5 @@ module.exports =
 
   compare: (nodes, file) ->
     ideal = @clean @read(file)
-    real  = @clean stringify(nodes)
+    real  = @clean stringify(nodes).css
     real.should.eql(ideal)

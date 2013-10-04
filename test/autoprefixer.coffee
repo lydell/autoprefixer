@@ -95,10 +95,17 @@ describe 'Autoprefixer', ->
         css    = instance.compile( instance.compile(input) )
         compare(css, output)
 
-    it 'parses difficult files', ->
+    it 'parses weirdly commented files', ->
       input  = cases.read('autoprefixer/syntax')
       output = cleaner.compile(input)
       compareWithoutComments(input, output)
+
+    # Note: This currently fails, since sheet does not support these
+    # at-rules, as opposed to css-stringify.
+    it.skip 'parses unusual at-rules', ->
+      input  = cases.read('autoprefixer/unusual')
+      output = cleaner.compile(input)
+      compare(input, output)
 
     it 'marks parsing errors', ->
       error = null
@@ -109,6 +116,27 @@ describe 'Autoprefixer', ->
 
       error.message.should.eql "Can't parse CSS: missing '}' near line 1:4"
       error.css.should.be.true
+
+    it 'also accepts an AST instead of a string', ->
+      cleaner.compile(stylesheet: rules: []).should.eql ''
+
+    it 'generates source maps', ->
+      css = '''
+        css {
+          is: awesome;
+        }
+        '''
+      output = cleaner.compile css,
+        map: true
+        source: 'in.css'
+        file: 'out.css'
+      output.css.should.eql css + "\n/*# sourceMappingURL=out.css.map */"
+      JSON.parse(output.map).should.eql
+        version: 3
+        file: 'out.css'
+        sources: ['in.css']
+        names: []
+        mappings: 'AAAA,K;EACE,Y;C'
 
   describe 'rework()', ->
 

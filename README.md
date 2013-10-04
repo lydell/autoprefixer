@@ -279,6 +279,11 @@ Use `autoprefixer` npm package:
 ```js
 var autoprefixer = require('autoprefixer');
 var prefixed     = autoprefixer.compile(css);
+
+/* Source maps. (The options below are passed to the `sheet` CSS stringifier dependency.) */
+var compiled = autoprefixer.compile(css, {map: true, source: 'in.css', file: 'out.css'})
+var prefixed = compiled.css;
+var sourceMap = compiled.map;
 ```
 
 ### JavaScript
