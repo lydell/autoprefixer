@@ -102,7 +102,8 @@ module.exports =
   # Get Can I Use features from another user fork
   fork: (fork, file, callback) ->
     [user, branch] = fork.split('/')
-    url = "#{user}/caniuse/#{branch}/features-json/#{file}"
+    branch ||= 'master'
+    url = "#{user}/caniuse/#{branch}/features-json/#{file}.json"
     @github url, (data) => callback @parse(data)
 
   # Call callback with list of all browsers

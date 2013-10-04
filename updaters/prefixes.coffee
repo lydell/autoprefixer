@@ -177,4 +177,9 @@ module.exports = (updater) ->
                      'height', 'min-height', 'max-height']
             browsers: browsers
 
+  @feature 'css3-cursors-newer', (browsers) =>
+    prefix 'zoom-in', 'zoom-out', 'grab', 'grabbing',
+            props:  ['cursor']
+            browsers: browsers
+
   @done => @save('prefixes', prefixes)
