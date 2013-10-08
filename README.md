@@ -15,18 +15,34 @@ from the [Can I Use](http://caniuse.com/).
 Write your CSS rules without vendor prefixes (in fact, forget about them
 entirely):
 
+```css
+:fullscreen a {
+  transition: transform 1s
+}
+```
+
+Process your CSS by Autoprefixer:
+
 ```js
-var css = 'a { transition: transform 1s }';
 var prefixed = autoprefixer.compile(css);
 ```
 
-Autoprefixer uses the data on current browser popularity
-and properties support to apply prefixes for you:
+It will use the data on current browser popularity and properties support
+to apply prefixes for you:
 
 ```css
-a {
+:-webkit-full-screen a {
   -webkit-transition: -webkit-transform 1s;
-  transition: transform 1s
+  transition: transform 1s;
+}
+
+:-moz-full-screen a {
+  transition: transform 1s;
+}
+
+:fullscreen a {
+  -webkit-transition: -webkit-transform 1s;
+  transition: transform 1s;
 }
 ```
 
@@ -106,7 +122,7 @@ a {
 
 ### Fast
 
-Autoprefixer is about 50 times faster than Compass and 10 times faster
+Autoprefixer is about 16 times faster than Compass and 8 times faster
 than Stylus.
 
 On a Core i7 with 10 GB of RAM and SSD, benchmark with GitHub styles is:
@@ -114,10 +130,10 @@ On a Core i7 with 10 GB of RAM and SSD, benchmark with GitHub styles is:
 ```
 ~/Dev/autoprefixer$ ./node_modules/.bin/cake bench
 Load GitHub styles
-Autoprefixer: 268 ms
-Compass:      13318 ms (49.7 times slower)
-Rework:       209 ms   (1.3 times faster)
-Stylus:       2337 ms  (8.7 times slower)
+Autoprefixer: 316 ms
+Compass:      5342 ms (16.9 times slower)
+Rework:       249 ms  (1.3 times faster)
+Stylus:       2548 ms (8.1 times slower)
 ```
 
 Unlike [-prefix-free](http://leaverou.github.io/prefixfree/), Autoprefixer
