@@ -1,6 +1,6 @@
 {
   "name": "autoprefixer",
-  "version": "0.8.20131017",
+  "version": "0.8.20131020",
   "description": "Parse CSS and add vendor prefixes to CSS rules using values from the Can I Use website",
   "keywords": ["css", "prefix", "rework", "source maps"],
   "author": "Andrey Sitnik <andrey@sitnik.ru>",
@@ -16,11 +16,11 @@
   },
   "devDependencies": {
     "coffee-script": "1.6.3",
-    "component":     "0.17.6",
+    "component":     "0.18.0",
     "fs-extra":      "0.8.0",
     "should":        "2.0.1",
     "stylus":        "0.38.0",
-    "rework":        "0.18.2",
+    "rework":        "0.18.3",
     "mocha":         "1.13.0",
     "glob":          "3.2.6",
     "nib":           "1.0.1"
