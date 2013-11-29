@@ -1,9 +1,16 @@
 # Fork information
+**Note:** I've released a new version of this fork, that uses [css-stringify] 1.4.0+ instead of
+[sheet], which means better CSS support. Before, one test didn't pass, but now it does. However, the
+new version is not backwards compatible, so I've put it on a [new branch] to not break things.
+
 This fork adds one thing: source map support. That's the only intended difference there will ever
 be. I will maintain this fork until the [source map issue] in the original autoprefixer repo is
 resolved.
 
 [source map issue]: https://github.com/ai/autoprefixer/issues/37
+[css-stringify]: https://github.com/visionmedia/css-stringify
+[sheet]: https://github.com/lydell/sheet/tree/mine
+[new branch]: https://github.com/lydell/autoprefixer/tree/source-maps-2
 
 # Autoprefixer
 
