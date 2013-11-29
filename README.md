@@ -355,7 +355,7 @@ environment.enable('autoprefixer');
 
 ### Node.js
 
-Add `autoprefixer: "lydell/autoprefixer#source-maps"` to package.json and run `npm install`. That
+Add `autoprefixer: "lydell/autoprefixer#source-maps-2"` to package.json and run `npm install`. That
 will always install the latest version, but I don't think that is a problem. (You can specify
 specific commits if you really need to.)
 
@@ -363,9 +363,9 @@ specific commits if you really need to.)
 var autoprefixer = require('autoprefixer');
 var prefixed     = autoprefixer.compile(css);
 
-/* Source maps. (The options below are passed to the `sheet` CSS stringifier dependency.) */
-var compiled = autoprefixer.compile(css, {map: true, source: 'in.css', file: 'out.css'})
-var prefixed = compiled.css;
+/* Source maps. */
+var compiled = autoprefixer.compile(css, {sourcemap: true, source: 'in.css', filename: 'out.css'})
+var prefixed = compiled.code;
 var sourceMap = compiled.map;
 ```
 

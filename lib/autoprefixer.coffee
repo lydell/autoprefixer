@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http:#www.gnu.org/licenses/>.
 
 parse     = require('css-parse')
-stringify = require('sheet')
+stringify = require('css-stringify')
 
 Browsers = require('./autoprefixer/browsers')
 Prefixes = require('./autoprefixer/prefixes')
@@ -63,11 +63,7 @@ class Autoprefixer
   compile: (nodes, data = {}) ->
     nodes = @parse(nodes, data) if typeof nodes == 'string'
     @rework(nodes.stylesheet)
-    compiled = stringify(nodes, data)
-    if data.map
-      compiled
-    else
-      compiled.css
+    stringify(nodes, data)
 
   # Return Rework filter, which will add necessary prefixes
   rework: (stylesheet) =>

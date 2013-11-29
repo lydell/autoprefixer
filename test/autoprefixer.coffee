@@ -100,9 +100,7 @@ describe 'Autoprefixer', ->
       output = cleaner.compile(input)
       compareWithoutComments(input, output)
 
-    # Note: This currently fails, since sheet does not support these
-    # at-rules, as opposed to css-stringify.
-    it.skip 'parses unusual at-rules', ->
+    it 'parses unusual at-rules', ->
       input  = cases.read('autoprefixer/unusual')
       output = cleaner.compile(input)
       compare(input, output)
@@ -127,16 +125,16 @@ describe 'Autoprefixer', ->
         }
         '''
       output = cleaner.compile css,
-        map: true
+        sourcemap: true
         source: 'in.css'
-        file: 'out.css'
-      output.css.should.eql css + "\n/*# sourceMappingURL=out.css.map */"
-      JSON.parse(output.map).should.eql
+        filename: 'out.css'
+      output.code.should.eql css
+      output.map.should.eql
         version: 3
         file: 'out.css'
         sources: ['in.css']
         names: []
-        mappings: 'AAAA,K;EACE,Y;C'
+        mappings: 'AAAA;EACE,WAAW'
 
   describe 'rework()', ->
 

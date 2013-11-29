@@ -174,7 +174,7 @@ describe 'Binary', ->
         file: 'b.css'
         sources: ['a.css']
         names: []
-        mappings: 'AAAA,G;EAAI,2B;EAAA,mB;C'
+        mappings: 'AAAA;EAAI,0BAAkB;EAAlB,kBAAkB'
       done()
 
 describe 'bin/autoprefixer', ->

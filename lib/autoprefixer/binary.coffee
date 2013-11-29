@@ -181,9 +181,15 @@ class Binary
           concat
 
         .compile (ast, data) =>
-          data.map = @sourceMap
-          compiled = compiler.compile(ast, data)
-          {content: compiled.toString(), map: compiled.map}
+          compiled = compiler.compile(ast,
+            {sourcemap: @sourceMap, filename: data.file})
+          if @sourceMap
+            compiled.map.sourceRoot = data.sourceRoot
+            compiled.code +=
+              "\n/*# sourceMappingURL=#{data.sourceMappingURL} */"
+            return {content: compiled.code, map: compiled.map}
+          else
+            return {content: compiled}
 
         .write (compiled, map) =>
           if output == '-'

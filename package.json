@@ -10,9 +10,9 @@
     "url": "https://github.com/ai/autoprefixer.git"
   },
   "dependencies": {
-    "css-parse": "~> 1.6.0",
-    "sheet":     "lydell/sheet#mine",
-    "climap":    "~0.1.1"
+    "css-parse":     "~> 1.6.0",
+    "css-stringify": "~1.4.0",
+    "climap":        "~0.1.1"
   },
   "devDependencies": {
     "coffee-script": "1.6.3",
