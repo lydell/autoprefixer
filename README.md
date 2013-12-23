@@ -7,6 +7,9 @@ This fork adds one thing: source map support. That's the only intended differenc
 be. I will maintain this fork until the [source map issue] in the original autoprefixer repo is
 resolved.
 
+**Update:** The original autoprefixer (version 1.0) now has source map support. Do not use this fork
+anymore.
+
 [source map issue]: https://github.com/ai/autoprefixer/issues/37
 [css-stringify]: https://github.com/visionmedia/css-stringify
 [sheet]: https://github.com/lydell/sheet/tree/mine
